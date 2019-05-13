@@ -1,0 +1,14 @@
+name: TimeDungeon
+version: "1.0.0-SNAPSHOT"
+api-version: "1.13"
+main: com.ericlam.mc.time.dungeon.main.TimeDungeon
+depend: [Vault]
+softdepend: [PlaceholderAPI]
+commands:
+  td:
+    aliases: [timedungeon, tdungeon, timed]
+    description: time dungeon commands
+permissions:
+  td.admin:
+    default: op
+    description: time dungeon admin permission

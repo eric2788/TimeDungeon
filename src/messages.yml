@@ -1,0 +1,106 @@
+prefix: "&dDungeon// &7"
+
+actionbar:
+  wait: "&eGame starting at <sec>"
+  game: "&eGame will ended in <sec>"
+  end: "The game is ended, we will teleport you after <sec> secs"
+
+players:
+  join: "&a<player> &e joined the game"
+  leave: "&a<player> &e left the game"
+
+games:
+  fulled: "The game is full !"
+  joined: "Successfully joined"
+  left: "Successfully left"
+  start: "The Game has started!!"
+  started: "The game has already started and not allowed to join in game"
+  end: "The game was over !"
+  death: "Player <player> has death !!!"
+
+title:
+  joined: "You joined <id>"
+  left: "You left <id>"
+  started: "Game Start"
+  end: "Game Over"
+  death: "YOU DEAD"
+
+invite:
+  counting: "The game will started at <secs> ! /td join <id> to join !"
+
+time:
+  count: "The game will started in <sec> seconds!"
+  start: "The game will ended in <sec> seconds!"
+
+error:
+  no-exist-dun: "We cannot find this Dungeon !"
+  not-in-game: "You are not in Dungeon <id>!"
+  already-in-game: "You are already in game!"
+  game-over: "The game has already ended"
+  not-player: "You are not player!"
+  not-number: "Not a number!"
+  not-pass:
+    - "You have not passed the requirement of joining this dungeon !"
+    - "Requirements:"
+    - " level: <level>"
+    - " price: <money>"
+    - " items:"
+
+help:
+  join: "/td join - join command"
+  leave: "/td leave - leave command"
+  list: "/td list - list command"
+  info: "/td info <id> - info command"
+  create: "/td create <id> - create command"
+  name: "/td name <id> - set name command"
+  time: "/td time <id> - set time command"
+  delete: "/td del <id> - remove by id"
+  save: "/td save <id> - save id"
+  canjoin: "/td canjoin <id> - set can join in game"
+  maxplayer: "/td maxplayer <id> <max-players> - set max players in game"
+  warp:
+    main: "/td warp - check help"
+    spawn: "/td warp spawn <id> - set spawn warp command"
+    wait: "/td warp wait <id> - set wait warp command"
+  cost:
+    main: "/td cost - check help"
+    item: "/td cost item - set hand item requirement"
+    money: "/td cost money <id> <money> - set money requirement"
+    level: "/td cost level <id> <level> - set level requirement"
+    clear: "/td cost clear <id> - clear all requirement"
+
+setup:
+  id-exist: "The id <id> is already exist!"
+  success: "&aOperation Success!"
+  failed: "&cOperation Failed!"
+  not-finished: "The setup has not finished! check the setup by using /td info <id> !"
+  canjoin: "Now the player can join in started game"
+  cannotjoin: "Now the player cannot join in started game"
+  item:
+    added: "Successfully added item"
+    removed: "Successfully removed item"
+
+info:
+  - "Dungeon #<id>"
+  - "Display name: <name>"
+  - "Spawn: <spawn>"
+  - "Times: <second>s"
+  - "Wait-Spawn: <wait-spawn>"
+  - "Can join ingame: <in-game>"
+  - "max players: <max>"
+  - "Requirements:"
+  - " level: <level>"
+  - " price: <money>"
+  - " items:"
+
+list: "Dungeons lists: <all>"
+
+placeholder:
+  stats:
+    NONE: "not started"
+    COUNTING: "being started"
+    STARTING: "in game"
+    GAMEEND: "game ended"
+  not-enough-arg: "not enough args"
+  not-started: "not started"
+  non-exist: "dungeon no exist"
