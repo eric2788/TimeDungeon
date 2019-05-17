@@ -50,6 +50,7 @@ help:
   join: "/td join - join command"
   leave: "/td leave - leave command"
   list: "/td list - list command"
+  setspawn: "/td setspawn - set the lobby spawn"
   info: "/td info <id> - info command"
   create: "/td create <id> - create command"
   name: "/td name <id> - set name command"
