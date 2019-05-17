@@ -70,9 +70,9 @@ help:
     clear: "/td cost clear <id> - clear all requirement"
 
 command:
-  arg-too-short: "&cCommand (<command>) Args too short.."
+  arg-too-short: "&cThe Args are too short.."
   no-permission: "&cYou dont have permission:"
-  not-found: "&cCannot find command (<command)"
+  not-found: "&cCannot find command (<command>)"
 
 setup:
   id-exist: "The id <id> is already exist!"

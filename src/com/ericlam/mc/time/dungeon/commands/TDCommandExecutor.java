@@ -26,7 +26,8 @@ public class TDCommandExecutor implements CommandExecutor, TabCompleter {
         try {
             return CommandHandle.handle(commandSender,command,strings,plugin);
         } catch (ArgTooShortException e) {
-            commandSender.sendMessage(TimeDungeon.getMessage("command.arg-too-short").replace("<command>",e.getMessage()));
+            commandSender.sendMessage(TimeDungeon.getMessage("command.arg-too-short"));
+            commandSender.sendMessage(e.getMessage());
         } catch (CommandNotFoundException e) {
             commandSender.sendMessage(TimeDungeon.getMessage("command.not-found").replace("<command>",e.getMessage()));
         } catch (NoPermissionException e) {
