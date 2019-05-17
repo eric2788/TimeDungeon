@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 public class CostItemCommand extends SubSubCommand {
     @Override
     public String getParentCommand() {
-        return null;
+        return "cost";
     }
 
     @Override

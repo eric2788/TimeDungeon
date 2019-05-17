@@ -31,6 +31,7 @@ public class DungeonManager {
         return dungeonManager;
     }
 
+
     private Map<String, DungeonRunner> runnerMap = new HashMap<>();
 
 
@@ -107,7 +108,7 @@ public class DungeonManager {
         for (ItemStack item : items) {
             contains = contains && inv.contains(item);
         }
-        Economy eco = TimeDungeon.getVauleEco();
+        Economy eco = TimeDungeon.getVaultEconomy().getEconomy();
         boolean moneyPass = eco.withdrawPlayer(player,money).type == EconomyResponse.ResponseType.SUCCESS;
 
         if (levelPass && moneyPass && contains){

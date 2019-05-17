@@ -7,6 +7,7 @@ import com.ericlam.mc.time.dungeon.commands.admins.warp.WarpMainCommand;
 import com.ericlam.mc.time.dungeon.commands.players.JoinCommand;
 import com.ericlam.mc.time.dungeon.commands.players.LeaveCommand;
 import com.ericlam.mc.time.dungeon.listeners.PlayerListener;
+import com.ericlam.mc.time.dungeon.managers.VaultEconomy;
 import com.ericlam.mc.time.dungeon.papi.TDPlaceholder;
 import com.hypernite.mc.api.commands.CommandManager;
 import net.milkbowl.vault.economy.Economy;
@@ -58,10 +59,10 @@ public class TimeDungeon extends JavaPlugin {
         plugin.getLogger().warning(msg);
     }
 
-    private static Economy vauleEco;
+    private static VaultEconomy vaultEconomy;
 
-    public static Economy getVauleEco() {
-        return vauleEco;
+    public static VaultEconomy getVaultEconomy() {
+        return vaultEconomy;
     }
 
     @Override
@@ -102,12 +103,7 @@ public class TimeDungeon extends JavaPlugin {
             API Hooking
          */
 
-        Optional<RegisteredServiceProvider<Economy>> ecoPlugin = Optional.ofNullable(getServer().getServicesManager().getRegistration(Economy.class));
-        RegisteredServiceProvider<Economy> eco = ecoPlugin.orElseThrow(()->{
-            getLogger().warning("我們找不到任何經濟插件！請安裝一個支援 Vault 的經濟插件!");
-            return new IllegalStateException("請安裝一個支援 Vault 的經濟插件!");
-        });
-        vauleEco = eco.getProvider();
+        vaultEconomy = new VaultEconomy(this);
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null){
             getLogger().info("找到 PlaceholderAPI 插件！ 正在掛接...");
