@@ -69,6 +69,11 @@ help:
     level: "/td cost level <id> <level> - set level requirement"
     clear: "/td cost clear <id> - clear all requirement"
 
+command:
+  arg-too-short: "&cCommand (<command>) Args too short.."
+  no-permission: "&cYou dont have permission:"
+  not-found: "&cCannot find command (<command)"
+
 setup:
   id-exist: "The id <id> is already exist!"
   success: "&aOperation Success!"

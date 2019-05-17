@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class TDCommandExecutor implements CommandExecutor, TabCompleter {
@@ -25,11 +26,12 @@ public class TDCommandExecutor implements CommandExecutor, TabCompleter {
         try {
             return CommandHandle.handle(commandSender,command,strings,plugin);
         } catch (ArgTooShortException e) {
-            e.printStackTrace();
+            commandSender.sendMessage(TimeDungeon.getMessage("command.arg-too-short").replace("<command>",e.getMessage()));
         } catch (CommandNotFoundException e) {
-            e.printStackTrace();
+            commandSender.sendMessage(TimeDungeon.getMessage("command.not-found").replace("<command>",e.getMessage()));
         } catch (NoPermissionException e) {
-            e.printStackTrace();
+            commandSender.sendMessage(TimeDungeon.getMessage("command.no-permission"));
+            commandSender.sendMessage(Arrays.stream(e.getPermissions()).map(TimeDungeon::getMessage).toArray(String[]::new));
         }
         return false;
     }
