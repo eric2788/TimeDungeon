@@ -50,7 +50,7 @@ public class DungeonManager {
                     BaseComponent[] baseComponents = new BaseComponent[]{
                             new TextComponent(DungeonNMS.convertItemStackToJson(item))
                     };
-                    adv.addHover("&e&m&oItem"+(i+1)+"&r", HoverEvent.Action.SHOW_ITEM,baseComponents);
+                    adv.addHover("&e&n&oItem" + (i + 1) + "&r", HoverEvent.Action.SHOW_ITEM, baseComponents);
                     if (i != items.size()-1) adv.addMessage(", ");
                 }
                 adv.addMessage("]");

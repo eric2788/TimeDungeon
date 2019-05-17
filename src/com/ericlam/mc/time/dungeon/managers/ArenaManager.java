@@ -8,10 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ArenaManager {
     private static ArenaManager arenaManager;
@@ -28,6 +25,14 @@ public class ArenaManager {
     }
 
     private Map<String, Dungeon> preset = new HashMap<>();
+
+    public Optional<Dungeon> getPreSet(String id) {
+        return Optional.ofNullable(preset.get(id));
+    }
+
+    public Set<String> getPreSets() {
+        return preset.keySet();
+    }
     
     
     private Dungeon getFromFile(FileConfiguration yml){

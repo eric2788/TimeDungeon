@@ -4,6 +4,7 @@ import com.ericlam.mc.time.dungeon.Dungeon;
 import com.ericlam.mc.time.dungeon.main.TimeDungeon;
 import com.ericlam.mc.time.dungeon.managers.ArenaManager;
 import com.hypernite.mc.api.commands.SubSubCommand;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -50,6 +51,9 @@ public class CostItemCommand extends SubSubCommand {
         }
         Player player = (Player) commandSender;
         ItemStack item = player.getInventory().getItemInMainHand();
+        if (item == null || item.getType() == Material.AIR) {
+            commandSender.sendMessage(TimeDungeon.getMessage("error.item-air"));
+        }
         String id = strings[0];
         Dungeon dungeon = ArenaManager.getInstance().findOrCreateDun(id);
         if (!dungeon.getItems().contains(item)) {

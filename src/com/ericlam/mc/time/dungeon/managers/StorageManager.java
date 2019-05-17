@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -22,10 +23,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StorageManager {
     private static StorageManager storageManager;
@@ -58,7 +56,7 @@ public class StorageManager {
             if (dungeon == null){
                 throw new DungeonNonExistException(id);
             }
-            caches.putIfAbsent(id,dungeon);
+            caches.put(id, dungeon);
             return dungeon;
         }else{
             return caches.get(id);
@@ -74,11 +72,15 @@ public class StorageManager {
             if (!FilenameUtils.getExtension(file.getName()).equals("yml")) continue;
             arr[i] = FilenameUtils.getBaseName(file.getName());
         }
-        return arr;
+        String[] presets = ArenaManager.getInstance().getPreSets().stream().map(l -> l.concat("(設置中)")).toArray(String[]::new);
+        return (String[]) ArrayUtils.addAll(arr, presets);
     }
 
     public void sendPlayerInfo(String id, CommandSender player) throws DungeonNonExistException {
-        Dungeon dungeon = findDungeonLocal(id);
+        Dungeon dungeon;
+        Optional<Dungeon> dungeonP = ArenaManager.getInstance().getPreSet(id);
+        dungeon = dungeonP.isPresent() ? dungeonP.get() : findDungeonLocal(id);
+        boolean preset = ArenaManager.getInstance().getPreSets().contains(id);
         String[] arr = dungeon.toInfo().stream().map(e->e.replace("<id>",id)).toArray(String[]::new);
         List<ItemStack> items = dungeon.getItems();
         AdvMessageBuilder adv = new AdvMessageBuilder("[");
@@ -87,13 +89,13 @@ public class StorageManager {
             BaseComponent[] baseComponents = new BaseComponent[]{
                     new TextComponent(DungeonNMS.convertItemStackToJson(item))
             };
-            adv.addHover("&e&m&oItem"+(i+1)+"&r", HoverEvent.Action.SHOW_ITEM,baseComponents);
+            adv.addHover("&e&n&oItem" + (i + 1) + "&r", HoverEvent.Action.SHOW_ITEM, baseComponents);
             if (i != items.size()-1) adv.addMessage(", ");
         }
         adv.addMessage("]");
-        TextComponent component = adv.build();
         player.sendMessage(arr);
-        player.spigot().sendMessage(component);
+        adv.sendPlayer((Player) player);
+        if (preset) player.sendMessage(TimeDungeon.getMessage("setup.not-saved"));
     }
 
     public boolean removeDungeon(String id) throws DungeonNonExistException {
@@ -109,7 +111,7 @@ public class StorageManager {
         return false;
     }
 
-    public Dungeon getFromFile(FileConfiguration yml){
+    Dungeon getFromFile(FileConfiguration yml) {
         String name = yml.getString("name");
         int price = yml.getInt("price");
         int level = yml.getInt("level");
@@ -119,8 +121,11 @@ public class StorageManager {
         List<ItemStack> items = new ArrayList<>();
         ConfigurationSection item = yml.getConfigurationSection("items");
         for (String key : item.getKeys(false)) {
-            ItemStack stack = (ItemStack)yml.get(key);
-            if (stack == null) continue;
+            ItemStack stack = (ItemStack) item.get(key);
+            if (stack == null) {
+                Bukkit.broadcast("stack is null", "td.debug");
+                continue;
+            }
             items.add(stack);
         }
         double x = yml.getDouble("location.x");

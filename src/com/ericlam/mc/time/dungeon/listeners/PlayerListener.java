@@ -1,6 +1,8 @@
 package com.ericlam.mc.time.dungeon.listeners;
 
+import com.ericlam.mc.time.dungeon.main.TimeDungeon;
 import com.ericlam.mc.time.dungeon.managers.DungeonManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,7 +21,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e){
         Player player = e.getEntity();
-        DungeonManager.getInstance().handleDeath(player);
+        Bukkit.getScheduler().runTask(TimeDungeon.getPlugin(), () -> DungeonManager.getInstance().handleDeath(player));
     }
 
     @EventHandler

@@ -1,6 +1,7 @@
 package com.ericlam.mc.time.dungeon.runners;
 
 import com.ericlam.mc.time.dungeon.Dungeon;
+import com.ericlam.mc.time.dungeon.listeners.SignListeners;
 import com.ericlam.mc.time.dungeon.main.TimeDungeon;
 import com.ericlam.mc.time.dungeon.managers.DungeonManager;
 import net.md_5.bungee.api.ChatMessageType;
@@ -33,7 +34,7 @@ public class DungeonRunner {
         this.waitTime = TimeDungeon.getWaitSecs();
         this.endTime = TimeDungeon.getEndSecs();
         this.canJoin = true;
-        this.gamestats = State.NONE;
+        setGameState(State.NONE);
         this.canJoinInGame = dungeon.isCanJoinInGame();
         this.timeDungeon = TimeDungeon.getPlugin();
     }
@@ -53,9 +54,11 @@ public class DungeonRunner {
     public void handleDeath(Player player){
         if (gamestats != State.STARTING) return;
         if (!players.removeIf(p->p.equals(player))) return;
-        player.teleport(TimeDungeon.getSpawn());
+        player.teleport(TimeDungeon.getSpawn() == null ? player.getLocation() : TimeDungeon.getSpawn());
+        if (TimeDungeon.getSpawn() == null) player.sendMessage(TimeDungeon.getMessage("error.no-spawn"));
         player.sendTitle(TimeDungeon.getPureMessage("title.death"),"",20,40,20);
         players.forEach(p->p.sendMessage(TimeDungeon.getMessage("games.death").replace("<player>",player.getName())));
+        SignListeners.updateSign(id, this.gamestats, players.size());
     }
 
     public boolean shouldDamage(Player player){
@@ -85,6 +88,7 @@ public class DungeonRunner {
         player.teleport(gamestats == State.STARTING ? dungeon.getSpawn() : dungeon.getWait());
         player.sendTitle(TimeDungeon.getPureMessage("title.joined"),"",20,40,20);
         players.forEach(p->p.sendMessage(TimeDungeon.getMessage("players.join").replace("<player>",player.getName())));
+        SignListeners.updateSign(id, this.gamestats, players.size());
     }
 
     public boolean isStarted() {
@@ -96,7 +100,10 @@ public class DungeonRunner {
     }
 
     public void handleLeave(Player player){
-        if (players.removeIf(p->p.equals(player))) players.forEach(p->p.sendMessage(TimeDungeon.getMessage("player.leave").replace("<player>",player.getName())));
+        if (players.removeIf(p -> p.equals(player))) {
+            players.forEach(p -> p.sendMessage(TimeDungeon.getMessage("player.leave").replace("<player>", player.getName())));
+            SignListeners.updateSign(id, this.gamestats, players.size());
+        }
     }
 
     public void leave(Player player){
@@ -104,35 +111,43 @@ public class DungeonRunner {
             player.sendMessage(TimeDungeon.getMessage("error.not-in-game").replace("<id>",id));
             return;
         }
-        player.teleport(TimeDungeon.getSpawn());
+        player.teleport(TimeDungeon.getSpawn() == null ? player.getLocation() : TimeDungeon.getSpawn());
+        if (TimeDungeon.getSpawn() == null) player.sendMessage(TimeDungeon.getMessage("error.no-spawn"));
         players.forEach(p->p.sendMessage(TimeDungeon.getMessage("player.leave").replace("<player>",player.getName())));
         player.sendTitle(TimeDungeon.getPureMessage("title.left"),"",20,40,20);
+        SignListeners.updateSign(id, this.gamestats, players.size());
+    }
+
+    private void setGameState(State state) {
+        this.gamestats = state;
+        SignListeners.updateSign(id, state, players.size());
     }
 
     public void startCounting(){
         if (task != null) return;
-        gamestats = State.COUNTING;
+        setGameState(State.COUNTING);
         task = new BukkitRunnable() {
             @Override
             public void run() {
                 if (waitTime > 0){
                     sendActionBar(TimeDungeon.getPureMessage("actionbar.wait").replace("<sec>",waitTime+""));
+
                     if (waitTime%60==0){
                         players.forEach(p->p.sendMessage(TimeDungeon.getMessage("time.count").replace("<sec>",waitTime+"")));
                         Bukkit.broadcastMessage(TimeDungeon.getMessage("invite.counting")
-                                .replace("<sec>",waitTime+"")
+                                .replace("<secs>", waitTime + "")
                                 .replace("<id>", id));
+                    } else if (waitTime % 30 == 0) {
+                        players.forEach(p -> p.sendMessage(TimeDungeon.getMessage("time.count").replace("<sec>", waitTime + "")));
+                    } else if (waitTime < 11) {
+                        players.forEach(p -> p.sendMessage(TimeDungeon.getMessage("time.count").replace("<sec>", waitTime + "")));
                     }
+
                     if (players.size() == 0){
                         cancel();
                         preEnding();
                     }
-                    if (waitTime%30==0){
-                        players.forEach(p->p.sendMessage(TimeDungeon.getMessage("time.count").replace("<sec>",waitTime+"")));
-                    }
-                    if (waitTime < 11){
-                        players.forEach(p->p.sendMessage(TimeDungeon.getMessage("time.count").replace("<sec>",waitTime+"")));
-                    }
+
                     waitTime--;
                 }else{
                     cancel();
@@ -143,7 +158,7 @@ public class DungeonRunner {
     }
 
     private void startGameing(){
-        gamestats = State.STARTING;
+        setGameState(State.STARTING);
         players.forEach(p->{
             p.teleport(dungeon.getSpawn());
             p.sendMessage(TimeDungeon.getMessage("game.start"));
@@ -155,18 +170,18 @@ public class DungeonRunner {
             public void run() {
                 if (gameTime > 0){
                     sendActionBar(TimeDungeon.getPureMessage("actionbar.game").replace("<sec>",gameTime+""));
+
                     if (gameTime%60==0){
                         players.forEach(p->p.sendMessage(TimeDungeon.getMessage("time.start").replace("<sec>",gameTime+"")));
+                    } else if (gameTime % 30 == 0) {
+                        players.forEach(p -> p.sendMessage(TimeDungeon.getMessage("time.start").replace("<sec>", gameTime + "")));
+                    } else if (gameTime < 11) {
+                        players.forEach(p -> p.sendMessage(TimeDungeon.getMessage("time.start").replace("<sec>", gameTime + "")));
                     }
+
                     if (players.size() == 0){
                         cancel();
                         preEnding();
-                    }
-                    if (gameTime%30==0){
-                        players.forEach(p->p.sendMessage(TimeDungeon.getMessage("time.start").replace("<sec>",gameTime+"")));
-                    }
-                    if (gameTime < 11){
-                        players.forEach(p->p.sendMessage(TimeDungeon.getMessage("time.start").replace("<sec>",gameTime+"")));
                     }
                     gameTime--;
                 }else{
@@ -178,10 +193,10 @@ public class DungeonRunner {
     }
 
     private void preEnding(){
-        gamestats = State.GAMEEND;
+        setGameState(State.GAMEEND);
         players.forEach(p->{
             p.sendTitle(TimeDungeon.getPureMessage("title.end"),"",20,40,20);
-            p.sendMessage(TimeDungeon.getMessage("game.end"));
+            p.sendMessage(TimeDungeon.getMessage("games.end"));
         });
         task = new BukkitRunnable() {
             @Override
@@ -201,7 +216,10 @@ public class DungeonRunner {
     }
 
     private void end(){
-        players.forEach(p-> p.teleport(TimeDungeon.getSpawn()));
+        players.forEach(player -> {
+            player.teleport(TimeDungeon.getSpawn() == null ? player.getLocation() : TimeDungeon.getSpawn());
+            if (TimeDungeon.getSpawn() == null) player.sendMessage(TimeDungeon.getMessage("error.no-spawn"));
+        });
         DungeonManager.getInstance().remove(this);
     }
 

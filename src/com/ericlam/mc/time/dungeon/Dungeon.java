@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +36,7 @@ public class Dungeon {
         this.level = 0;
         this.seconds = 0;
         this.price = 0.0;
+        this.name = "NO NAME";
     }
 
     public int getMaxPlayers() {
@@ -111,12 +111,12 @@ public class Dungeon {
         this.items.clear();
     }
 
-    public void addItem(ItemStack... items){
-        this.items.addAll(Arrays.asList(items));
+    public void addItem(ItemStack items) {
+        this.items.add(items);
     }
 
-    public void removeItem(ItemStack... item){
-        this.items.removeAll(Arrays.asList(item));
+    public void removeItem(ItemStack item) {
+        this.items.remove(item);
     }
 
     public boolean isDone(){
