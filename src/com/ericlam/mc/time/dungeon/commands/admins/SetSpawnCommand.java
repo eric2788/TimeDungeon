@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -65,6 +67,13 @@ public class SetSpawnCommand extends SubCommand {
         spawn.put("pitch", location.getPitch());
         spawn.put("yaw", location.getYaw());
         config.createSection("spawn", spawn);
-        commandSender.sendMessage(TimeDungeon.getMessage("setup.success"));
+        boolean done;
+        try {
+            config.save(new File(getPlugin().getDataFolder(), "config.yml"));
+            done = true;
+        } catch (IOException e) {
+            done = false;
+        }
+        commandSender.sendMessage(TimeDungeon.getMessage("setup." + (done ? "success" : "failed")));
     }
 }
